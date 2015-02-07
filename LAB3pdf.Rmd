@@ -2,11 +2,14 @@
 title: "STAT601 Lab3"
 author: "Chengen Xie cx22"
 date: "February 4, 2015"
-output: pdf_document
+output: html_document
 ---
 
 #Exercise 2
 ##Question 1
+
+> fuck fcuk
+>
 ```{r}
 #### Plot the density ####
 xseq <- seq(0,10,0.01)
@@ -66,22 +69,20 @@ print(paste("Acceptance Ratio: ",length(samples.gamma)/N))
 ```
 
 ##Question 5
-No
+No.It is difficult to find a proposal function. And the acceptance rate will be low.
 
 #Excercise 3
 ##Question1
 $p(x) = \int\limits_a^x \frac{1}{\int\limits_a^b exp(-\frac{(x-m)^2}{2v}} \exp(-\frac{(x-m)^2}{2v}) dx$
 
-There for it is a truncated normal distribution
+Therefore it is a truncated normal distribution
 
 ##Question2
-Using a normal distribution as proposal funtion.
+Using a normal distribution as proposal funtion. And the parameter should be $\frac{1}{\phi(b)-\phi(a)}$
 
 ##Question3
-
-
 The inverse transform sampling method works as follows:
 
-Generate a random number u from the standard uniform distribution in the interval [0,1].
-Compute the value x such that F(x) = u.
+Generate a random number u from U(0,1)
+find value x such when F(x) = u.
 Take x to be the random number drawn from the distribution described by F.
