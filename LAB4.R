@@ -15,7 +15,7 @@ for (i in 2:N){
   #Calculate likelihood for Latitude
   MC[i] <- (MC[i-1]*(i-1) + prod(dcauchy(Latitude,theta,0.0002)))/i
   IS[i] <- (IS[i-1]*(i-1) + prod(dcauchy(Latitude,thetaq,0.0002))*dcauchy(thetaq,36.07,0.02)/dcauchy(thetaq,median(Latitude),10^-4))/i
-  print(i/N*100)
+  #print(i/N*100)
 }
 
 df1 <- data.frame(log(xseq,10),MC)

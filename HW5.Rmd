@@ -1,0 +1,103 @@
+---
+title: "Homework5"
+author: "Chengen Xie (cx22)"
+date: "February 9, 2015"
+output: pdf_document
+---
+#Exercise 1
+Let 
+$$
+y = exp(-e^{-(x-c/\beta)})
+$$
+then
+$$
+x = -\beta log(log 1/y) + c = F^{-1}(y)
+$$
+which is the inverse function of cdf.
+Therefore the random variable that ~ Gumbel($c,\beta$) can be generate from $F^{-1}(y_i)$ where $y_i$ ~ Uniform(0,1)
+
+
+#Exercise2
+```{r eval = FALSE}
+N <- 10^6
+data <- rep(0,N)
+data [1] <- rcauchy(1,0,1)
+for (i in 2:N){
+    data[i] <- (data[i-1]*(i-1) + rcauchy(1,0,1))/i
+}
+
+x <- seq(1:N)
+df <- data.frame(x,data)
+
+p <- ggplot(df, aes(log(x,10), data))
+p + geom_line() 
+
+```
+Therefore, from 4 examples we can see Cauchy(0,1) cannot converge at $N = 10^6$
+
+##Sample 1
+![Sample1](/Users/Dino/Desktop/Rplot06.jpeg)
+
+##Sample 2
+![Sample2](/Users/Dino/Desktop/Rplot07.jpeg)
+
+##Sample 3
+![Sample3](/Users/Dino/Desktop/Rplot08.jpeg)
+
+##Sample 4
+![Sample4](/Users/Dino/Desktop/Rplot06.jpeg)
+
+
+#Exercise 3
+
+##(a)
+$$
+p(\theta|x_{1:n}) = \frac{p(\theta) p(x_{1:n}|\theta)}{p(x_{1:n})}
+$$
+$$
+\frac{p(\theta|x_{1:n})}{p(x_{1:n}|\theta)} = \frac{p(\theta)}{p(x_{1:n})}
+$$
+Take derivative of both side
+Then we have
+$$
+\int \frac{p(\theta|x_{1:n})}{p(x_{1:n}|\theta)} = frac{1}{p(x_{1:n})}
+$$
+Therefore
+$$
+p(x_{1:n}) = \frac{1}{\frac{1}{N}\sum 1/p(x_{1:n}|\theta)}
+$$
+
+##(b)
+```{r eval=FALSE}
+x <- 2
+
+N = 10^6
+lambda <- 1
+lambda0 <- 1/(10^2)
+MC<- rep(0,N)
+
+
+M <- (lambda0*0+lambda*2) / (lambda0+1)
+L <- lambda0+1
+theta <- rnorm(N,M ,sqrt(L^-1))
+  
+  MC<- rep(0,N)
+  for (i in 1:N){
+    MC[i] <- 1/dnorm(x,theta[i],sqrt(lambda^-1))
+  }
+ 
+```
+
+##Results:
+
+```{r eval=FALSE}
+> 1/mean(MC)
+[1] 0.07345119
+> dnorm(2,0,sqrt(lambda^-1 + lambda0^-1))
+[1] 0.03891791
+```
+
+![img](/Users/Dino/Desktop/Rplot11.jpeg)
+
+
+#Exercise 5
