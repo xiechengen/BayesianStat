@@ -99,5 +99,55 @@ theta <- rnorm(N,M ,sqrt(L^-1))
 
 ![img](/Users/Dino/Desktop/Rplot11.jpeg)
 
+From the graph we can observe that HMA method is approaching the true value but still not converge when N = 10^6. Therefore it is a slow process.
+
+##(c)
+
+```{r eval=FALSE}
+x <- 2
+
+N = 10^6
+lambda <- 1
+lambda0 <- 1/(100^2)
+MC<- rep(0,N)
+
+
+M <- (lambda0*0+lambda*2) / (lambda0+1)
+L <- lambda0+1
+theta <- rnorm(N,M ,sqrt(L^-1))
+  
+  MC<- rep(0,N)
+  for (i in 1:N){
+    MC[i] <- 1/dnorm(x,theta[i],sqrt(lambda^-1))
+  }
+ 
+```
+
+##Result
+
+```{r eval=FALSE}
+> 1/mean(MC)
+[1] 0.095079
+> dnorm(2,0,sqrt(lambda^-1 + lambda0^-1))
+[1] 0.003988426
+```
+Therefore still not converge to the true value
 
 #Exercise 5
+
+$Z=X_k$ where k = min{$k,x_k \in A$}
+$$
+p(Z \in S) = \sum p(x_k \in S, x_1 \notin A ... x_{k-1} \notin A)
+$$
+$$
+=\sum p(x_k \in S) p(x_1 \notin A)...p(x_{k-1}\notin A)
+$$
+$$
+=\sum p(x \in S) (1- p(x \in A)^{k-1})
+$$
+$$
+= \frac{p(x \in S)}{p(x \in A)}
+$$
+$$
+= p(x \in S | x \in A)
+$$
