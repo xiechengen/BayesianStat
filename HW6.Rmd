@@ -1,0 +1,130 @@
+---
+title: "HW6"
+author: "Chengen Xie (cx22)"
+date: "March 3, 2015"
+output: pdf_document
+---
+
+#Exercise 1
+##Question a
+
+$$p(y|x) \sim Uniform(max(0,x-c),min(x+c,1))$$
+$$p(x|y) \sim Uniform(max(0,x-c),min(x+c,1))$$
+
+##Question b
+```{r}
+N <- 10^3
+
+x<-rep(0,N)
+y<-rep(0,N)
+c<- c(0.25,0.05,0.02)
+
+GS <- function(c){
+y[1] <- 0.9
+x[1] <- 0.85
+
+for (i in 2:N){
+  y[i] <- runif(1,max(0,x[i-1]-c),min(x[i-1]+c,1))
+  x[i] <- runif(1,max(0,y[i]-c),min(y[i]+c,1))
+}
+
+xseq <-seq(1,N)
+#traceplot of x
+plot(xseq,x)
+lines(xseq,x)
+#traceplot of y
+plot(xseq,y)
+lines(xseq,y)
+
+#scatterplot
+plot(x,y)
+
+
+return (NULL)
+}
+```
+
+##Question c
+when c = 0.25
+```{r}
+GS(c[1])
+
+```
+
+when c= 0.05
+```{r}
+GS(c[2])
+
+```
+
+when c = 0.002
+```{r}
+GS(c[3])
+
+```
+
+##Qustion d
+Because when c is smaller, the sample will fuctuate and focus on certain areas, which is no longer a normal distribution.
+
+#Excercise 2
+##Question a
+$$  p(u|v) \sim Uniform(|v|,1-|v|)$$
+$$ p(v|u) \sim Uniform(-min(u,c/2,1-u),min(u,c/2,1-u))$$
+##Question b
+```{r}
+N <- 10^3
+
+u<-rep(0,N)
+v<-rep(0,N)
+c<- c(0.25,0.05,0.02)
+
+GS <- function(c){
+u[1] <- 0.3
+v[1] <- 0.2
+
+for (i in 2:N){
+  u[i] <- runif(1,abs(v[i-1]),1-abs(v[i-1]))
+  v[i] <- runif(1,-min(u[i],c/2,1-u[i]),min(u,c/2,1-u))
+}
+
+xseq <-seq(1,N)
+#traceplot of x
+plot(xseq,u+v)
+#traceplot of y
+plot(xseq,u-v)
+
+#scatterplot
+plot(u+v,u-v)
+
+
+return (NULL)
+}
+```
+
+##Question c
+when c = 0.25
+```{r}
+
+
+```
+
+when c= 0.05
+```{r}
+GS(c[2])
+
+```
+
+when c = 0.002
+```{r}
+GS(c[3])
+
+```
+
+
+#Excercise 3
+##Question a
+$$p(\beta|z) \sim N(\frac{\tau_{\beta}^2 zi xi}{1 + \tau }) $$
+##Question b
+
+##Question c
+
