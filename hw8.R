@@ -4,17 +4,17 @@ library(LaplacesDemon)
 library(MCMCpack)
 
 
-data1=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school1.dat')
-data2=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school2.dat')
-data3=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school3.dat')
-data4=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school4.dat')
-data5=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school5.dat')
-data6=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school6.dat')
-data7=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school7.dat')
-data8=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school8.dat')
+d1=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school1.dat')
+d2=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school2.dat')
+d3=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school3.dat')
+d4=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school4.dat')
+d5=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school5.dat')
+d6=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school6.dat')
+d7=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school7.dat')
+d8=read.table('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/school8.dat')
 
 
-Y <- cbind.fill(data1,data2,data3,data4,data5,data6,data7,data8,fill=NA)
+Y <- cbind.fill(d1,d2,d3,d4,d5,d6,d7,d8,fill=NA)
 
 
 ##### MCMC analysis for school data
@@ -43,16 +43,12 @@ theta<-ybar
 sigma2<-0.5
 mu<-mean(theta)
 tau2<-var(theta)
-###
 
-### setup MCMC
 set.seed(1)
 S<-5000
 THETA<-matrix( nrow=S,ncol=m)
 MST<-matrix( nrow=S,ncol=3)
-###
 
-### MCMC algorithm
 for(s in 1:S) 
 {
   
@@ -87,52 +83,54 @@ for(s in 1:S)
   MU<-mu
   
 } 
-###
+
 
 mcmc1<-list(THETA=THETA,MST=MST)
-
-
 
 plot(MST[1:S,1],type="l",main=" mu")
 y_lag <- filter(MST[1:S,1], rep(1/30, 30), sides=1)
 lines(y_lag, col="red")
 
-plot(MST[1:S,2],type="l",xlab="N",xlim=c(0,5000),ylab="MC approx",main="sigma2")
+plot(MST[1:S,2],type="l",main="sigma2")
 y_lag <- filter(MST[1:S,2], rep(1/30, 30), sides=1)
 lines(y_lag, col="red")
 
-plot(MST[1:S,3],type="l",xlab="N",xlim=c(0,5000),ylab="MC approx",main="tau2")
+plot(MST[1:S,3],type="l",main="tau2")
 y_lag <- filter(MST[1:S,2], rep(1/30, 30), sides=1)
 lines(y_lag, col="red")
 
 
-#Part b)
+#b)
 mean((MST[,1]))
-p.interval(MST[,1], HPD=FALSE, MM=FALSE, plot=TRUE)
 x1<- seq(0,14,length=1000)
+p.interval(MST[,1], HPD=FALSE, MM=FALSE, plot=TRUE)
 mu0<-dnorm(x1,7,5^1/2)
 points(x1,mu0, type="l",col="red",lwd=3)
 
 mean((MST[,2]))
-p.interval(MST[,2], HPD=FALSE, MM=FALSE, plot=TRUE)
 x2 <- seq(0,30,length=1000)
+p.interval(MST[,2], HPD=FALSE, MM=FALSE, plot=TRUE)
 sigma20<-dinvgamma(x2,1, 15)
-points(x2,sigma20, type="l",col="blue",lwd=3)
-plot(x2,sigma20, type="l",col="blue",lwd=3)
+points(x2,sigma20, type="l",col="red",lwd=2)
+plot(x2,sigma20, type="l",col="red",lwd=2)
 
 mean((MST[,3]))
-p.interval(MST[,3], HPD=FALSE, MM=FALSE, plot=TRUE)
 x3<- seq(0,30,length=1000)
+p.interval(MST[,3], HPD=FALSE, MM=FALSE, plot=TRUE)
 tau20<-dinvgamma(x3,1, 10)
-points(x3,tau20, type="l",col="green",lwd=3)
-##plot(x3,tau20, type="l",col="green",lwd=3)
+points(x3,tau20, type="l",col="red",lwd=2)
+plot(x3,tau20, type="l",col="green",lwd=3)
 
 # c)
-R<-rep(0,S)
-R<-(MST[,3]/(MST[,2]+MST[,3]))
-plot(density(R))
-R0<-(tau20/(sigma20+tau20))
-lines(density(R0,na.rm=TRUE))
+  mu<- rnorm(10000,mu0,sqrt(g20))
+  tau<- 1/rgamma(10000,eta0/2,(eta0*t20)/2)
+  sigma<- 1/rgamma(10000,nu0/2,(nu0*s20)/2)
+  
+  R<-rep(0,S)
+  R<-(MST[,3]/(MST[,2]+MST[,3]))
+  plot(density(R),xlim = c(-0.2,1.5),ylim=c(0,5),col="darkblue")
+  R0<-(tau/(sigma+tau))
+  lines(density(R0),col="darkred")
 
 #Part d)
 ptheta <- mean(theta[7]<theta[6])
@@ -147,5 +145,9 @@ p8<- mean(theta[7]<theta[8])
 p<- p1*p2*p3*p4*p5*p6*p8
 
 #Part e)
-#For School 1
-plot(c(1,5000),THETA[,1],type="l")
+meanTheta <- rep(0,8)
+
+for (i in 1:8){
+  meanTheta[i] <- mean(THETA[,i])
+}
+plot(meanTheta,ybar,type="l")

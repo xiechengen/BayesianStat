@@ -1,0 +1,126 @@
+---
+title: "lab9"
+author: "Chengen Xie (cx22)"
+date: "April 2, 2015"
+output: pdf_document
+---
+
+#Question 1
+
+  let $\frac{1}{\tau} = \sigma^2$
+
+$$
+x|\mu,\tau \sim LogNormal(\mu,\tau)
+$$
+
+$$
+\mu \sim  N(\mu_0,\tau_0)
+$$
+
+$$
+\tau \ sim Gamma(\alpha,\beta)
+$$
+
+$$
+p(x|\mu,\tau) = \frac{\sqrt{\tau}}{\sqrt{ 2 \pi} x} \exp(-\frac{1}{2}\tau(\ln x - \mu)^2)
+$$
+The likelihood will be 
+$$
+L(x_{1:n}|\mu,\tau) \propto \tau^{n/2}\exp(-1/2 \tau \sum^{n}_{i=1}(\ln x_i - \mu)^2)
+$$
+
+in the form of sigma it will be
+$$
+L(x_{1:n}|\mu,\sigma) \propto \sigma^{n}\exp(-1/2 \frac{1}{\sigma^2} \sum^{n}_{i=1}(\ln x_i - \mu)^2)
+$$
+
+#Question 2
+
+Gibbs Sampler for mu
+$$
+\mu|x,\tau \sim N(\mu|\mu_0,\tau_0) L(x_{1:n}|\mu,\tau)
+\propto exp(-0.5((n\tau + tau_0)\mu^2 - 2(\tau\sum^{n}_{i=1}\ln x_i + \tau_0 \mu_0)\mu))
+= N(\mu',\tau')
+$$
+
+where
+$$
+\mu' = \frac{\tau * \sum \ln x_i + \tau_0 \mu_0}{n\tau + \tau_0}
+$$
+
+$$
+\tau' = n \tau + \tau_0
+$$
+
+Gibbs Sampler for sigma
+
+  let $\frac{1}{\tau} = \sigma^2$
+  
+  $$
+  \tau|\mu,x \sim Gamma(\tau|\alpha,\beta)L(x_{1:n}|\mu,\sigma) 
+  \propto \tau^{\alpha - 1 + n/2} exp(-\tau(\beta + \frac{\sum(\ln x_i - \mu)^2}{2}))
+  =Gamma(\alpha',\beta')
+  $$
+  
+  where
+  $$
+  \alpha' = \alpha + n/2
+  $$
+  $$
+  \beta' = \beta + \frac{\sum(\ln x_i - \mu)^2}{2}
+  $$
+
+```{r}
+data <-read.csv("/Users/Dino/Downloads/data.txt")
+N <- 20000
+n <- nrow(data)
+
+a<- b<- 0.1
+
+
+mu<-rep(0,N)
+tau<-rep(0,N)
+
+mu0<- 0
+t0<-1
+
+for (i in 2:N){
+  ts <- n * tau[i-1] + t0
+  mus <- (tau[i-1] * sum(log(data)) + t0 * mu0) / ts
+  
+  mu[i] <- rnorm(1,mus,1/sqrt(ts))
+  
+  tau[i] <- rgamma(1,a + n/2,b + sum((log(data)-mu[i])^2)/2)
+  
+  
+}
+
+xseq <- seq(1,N)
+```
+```{r eval=FALSE}
+plot(xseq[5000:N],mu[5000:N],type = 'l',main = "traceplot for mu")
+plot(xseq[5000:N],1/tau[5000:N], type='l',main = "traceplot for sigma^2")
+```
+
+![1](/Users/Dino/Desktop/lab91.jpeg)
+![2](/Users/Dino/Desktop/lab92.jpeg)
+![3](/Users/Dino/Desktop/lab93.jpeg)
+![4](/Users/Dino/Desktop/lap94.jpeg)
+
+
+#Question 3
+```{r }
+xmean <-exp(mu[5000:N]+1/(2*tau[5000:N]))
+##mean
+mean(xmean)
+##confidential interval
+quantile(xmean,c(0.025,0.975))
+
+xvar <- (exp(1/tau[5000:N])-1)*exp(2*mu[5000:N]+1/tau[5000:N])
+##variance
+mean(xvar)
+##confidential interval
+quantile(xvar,c(0.025,0.975))
+```
+
+
